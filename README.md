@@ -36,6 +36,11 @@ So for `ismatejsingle.com` (apex) to work cleanly, the recommended approach is:
 2. Update **nameservers** at Squarespace to the Cloudflare nameservers.
 3. Then add the custom domain in Cloudflare Pages (Cloudflare can “flatten” the apex `CNAME` automatically).
 
+### If you accidentally created a *Workers* project (Wrangler) instead of Pages
+
+If your Cloudflare build logs show it running `npx wrangler deploy`, you’re deploying as a Worker.
+This repo includes `wrangler.jsonc` + `public/` so that flow can still work (static assets served by Workers).
+
 ## What I need from you to finish the setup fast
 
 Reply with:
