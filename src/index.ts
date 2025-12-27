@@ -8,6 +8,7 @@ import {
   renderUnsubscribeSuccessPage,
   renderUnsubscribeErrorPage,
 } from './pages';
+import { renderAdminPage } from './admin';
 
 type Bindings = {
   DB: D1Database;
@@ -23,6 +24,11 @@ const rateLimiter = createRateLimiter(5, 60000);
 
 // CORS for API routes
 app.use('/api/*', cors());
+
+// Admin dashboard page
+app.get('/admin', (c) => {
+  return c.html(renderAdminPage());
+});
 
 // ============================================
 // PUBLIC ENDPOINTS
@@ -240,6 +246,17 @@ app.get('/api/admin/stats', adminAuth, async (c) => {
   return c.json({
     subscribers: stats,
     currentStatus: status,
+  });
+});
+
+// Get subscriber list
+app.get('/api/admin/subscribers', adminAuth, async (c) => {
+  const subscribers = await c.env.DB.prepare(
+    'SELECT email, verified, created_at FROM subscribers ORDER BY created_at DESC'
+  ).all<{ email: string; verified: number; created_at: string }>();
+
+  return c.json({
+    subscribers: subscribers.results || [],
   });
 });
 
