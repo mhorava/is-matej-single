@@ -1,0 +1,32 @@
+{
+  "name": "is-matej-single",
+  "version": "1.0.0",
+  "description": "Is Matej Single? A simple status site with email subscriptions.",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create is-matej-single-db",
+    "db:migrate": "wrangler d1 execute is-matej-single-db --remote --file=./schema.sql",
+    "db:migrate:local": "wrangler d1 execute is-matej-single-db --local --file=./schema.sql"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mhorava/is-matej-single.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mhorava/is-matej-single/issues"
+  },
+  "homepage": "https://github.com/mhorava/is-matej-single#readme",
+  "dependencies": {
+    "hono": "^4.11.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251225.0",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.54.0"
+  }
+}

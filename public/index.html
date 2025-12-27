@@ -8,25 +8,186 @@
     <style>
       :root {
         color-scheme: light dark;
+        --bg: #fff;
+        --text: #111;
+        --text-muted: #666;
+        --border: #ddd;
+        --btn-bg: #111;
+        --btn-text: #fff;
+        --success: #22c55e;
+        --error: #ef4444;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #111;
+          --text: #fff;
+          --text-muted: #999;
+          --border: #333;
+          --btn-bg: #fff;
+          --btn-text: #111;
+        }
+      }
+      * {
+        box-sizing: border-box;
       }
       body {
         margin: 0;
         min-height: 100svh;
-        display: grid;
-        place-items: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
           Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: var(--bg);
+        color: var(--text);
+        padding: 20px;
+        gap: 40px;
       }
       h1 {
         font-size: clamp(64px, 18vw, 180px);
         letter-spacing: -0.04em;
         margin: 0;
       }
+      .subscribe-section {
+        text-align: center;
+        max-width: 360px;
+        width: 100%;
+      }
+      .subscribe-title {
+        font-size: 14px;
+        color: var(--text-muted);
+        margin: 0 0 12px;
+        font-weight: 400;
+      }
+      .subscribe-form {
+        display: flex;
+        gap: 8px;
+      }
+      .subscribe-input {
+        flex: 1;
+        padding: 12px 16px;
+        font-size: 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text);
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .subscribe-input:focus {
+        border-color: var(--text);
+      }
+      .subscribe-input::placeholder {
+        color: var(--text-muted);
+      }
+      .subscribe-btn {
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: 500;
+        background: var(--btn-bg);
+        color: var(--btn-text);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: opacity 0.2s, transform 0.1s;
+        white-space: nowrap;
+      }
+      .subscribe-btn:hover {
+        opacity: 0.9;
+      }
+      .subscribe-btn:active {
+        transform: scale(0.98);
+      }
+      .subscribe-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .message {
+        margin-top: 12px;
+        font-size: 14px;
+        min-height: 20px;
+      }
+      .message.success {
+        color: var(--success);
+      }
+      .message.error {
+        color: var(--error);
+      }
+      @media (max-width: 400px) {
+        .subscribe-form {
+          flex-direction: column;
+        }
+        .subscribe-btn {
+          width: 100%;
+        }
+      }
     </style>
   </head>
   <body>
     <h1>Yes</h1>
+
+    <section class="subscribe-section">
+      <p class="subscribe-title">Get notified when this changes</p>
+      <form class="subscribe-form" id="subscribeForm">
+        <input
+          type="email"
+          class="subscribe-input"
+          id="emailInput"
+          placeholder="your@email.com"
+          required
+          autocomplete="email"
+        />
+        <button type="submit" class="subscribe-btn" id="subscribeBtn">
+          Subscribe
+        </button>
+      </form>
+      <p class="message" id="message"></p>
+    </section>
+
+    <script>
+      const form = document.getElementById('subscribeForm');
+      const input = document.getElementById('emailInput');
+      const btn = document.getElementById('subscribeBtn');
+      const message = document.getElementById('message');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email = input.value.trim();
+        if (!email) return;
+
+        // Disable form while submitting
+        btn.disabled = true;
+        btn.textContent = 'Subscribing...';
+        message.textContent = '';
+        message.className = 'message';
+
+        try {
+          const response = await fetch('/api/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            message.textContent = data.message || 'Check your email to confirm!';
+            message.className = 'message success';
+            input.value = '';
+          } else {
+            message.textContent = data.error || 'Something went wrong.';
+            message.className = 'message error';
+          }
+        } catch (err) {
+          message.textContent = 'Network error. Please try again.';
+          message.className = 'message error';
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Subscribe';
+        }
+      });
+    </script>
   </body>
 </html>
-
-

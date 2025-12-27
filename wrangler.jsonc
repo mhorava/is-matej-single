@@ -1,13 +1,16 @@
 {
-  // This exists only to support Cloudflare setups that run:
-  //   npx wrangler deploy
-  // (Workers + static assets). If you use Cloudflare Pages (static),
-  // you can ignore this file and set build to "None".
   "name": "is-matej-single",
+  "main": "src/index.ts",
   "compatibility_date": "2025-12-12",
   "assets": {
     "directory": "./public"
-  }
+  },
+  // D1 Database for storing subscribers
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "is-matej-single-db",
+      "database_id": "52a0f4d3-93a8-42bc-ac6d-4112c630e8b6"
+    }
+  ]
 }
-
-
